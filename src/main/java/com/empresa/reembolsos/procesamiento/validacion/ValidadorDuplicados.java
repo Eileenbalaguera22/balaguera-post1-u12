@@ -2,7 +2,7 @@ package com.empresa.reembolsos.procesamiento.validacion;
 
 import com.empresa.reembolsos.dominio.SolicitudReembolso;
 import org.springframework.stereotype.Component;
-import com.empresa.reembolsos.infraestructura.RepositorioSolicitudesJpa;
+
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;

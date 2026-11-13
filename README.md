@@ -328,3 +328,13 @@ Para ejecutar las pruebas:
 El proyecto utiliza Git para registrar los avances mediante commits descriptivos y GitHub para almacenar el repositorio remoto.
 
 Los commits se realizan de forma progresiva, siguiendo el orden de implementación establecido en el documento del proyecto integrador.
+
+## Evidencias de GitHub Actions
+
+### Pipeline fallido por violación intencional
+
+![Pipeline fallido](docs/evidencias/pipeline-fallido.png)
+
+### Pipeline exitoso después del revert
+
+![Pipeline exitoso](docs/evidencias/pipeline-exitoso.png)
