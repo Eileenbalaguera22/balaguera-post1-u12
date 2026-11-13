@@ -153,6 +153,86 @@ El sistema queda más preparado para crecer y permite mantener cada fórmula de 
 Es necesario registrar correctamente cada calculadora y asegurar que no existan dos implementaciones asociadas a la misma categoría.
 
 ---
+### Parte 2
+
+
+## Decisión de diseño 3: Arquitectura en capas simples o Hexagonal
+
+Se decidió mantener la arquitectura en capas simples para la persistencia,
+porque actualmente no existe un plan confirmado para cambiar el motor
+de base de datos.
+
+El servicio utiliza directamente RepositorioSolicitudesJpa. Crear una
+interfaz de puerto adicional en este momento aumentaría la complejidad
+sin resolver una necesidad actual.
+
+Para las notificaciones se conserva ObservadorCambioEstado, ya que
+permite modificar NotificadorContabilidad para conectarlo con una API
+externa sin cambiar el servicio ni los demás observadores.
+
+Esta decisión aplica el principio YAGNI, porque evita agregar
+abstracciones basadas únicamente en necesidades futuras hipotéticas.
+
+## Decisión de diseño 4: Reglas de arquitectura
+
+La primera regla de ArchUnit evita que el paquete procesamiento
+dependa de infraestructura, adaptadores REST o clases de persistencia JPA.
+
+Sin embargo, permite utilizar anotaciones como @Component de Spring,
+porque estas sirven para registrar los componentes y no representan
+una dependencia directa de acceso a datos o de la capa web.
+
+Las cuatro reglas verifican que:
+- Procesamiento no dependa de infraestructura ni de persistencia.
+- El controlador acceda únicamente a las capas permitidas.
+- Las calculadoras implementen CalculadoraReembolso.
+- Los notificadores implementen ObservadorCambioEstado.
+
+## Resumen del ADR-001
+
+Se decidió mantener la arquitectura en capas simples para la persistencia
+y conservar el mecanismo Observer para las notificaciones.
+
+La decisión evita crear interfaces adicionales sin una necesidad real
+y permite preparar la integración futura de Contabilidad.
+
+El detalle de la decisión se encuentra en docs/adr/ADR-001.md.
+
+## Qué se descartó y por qué
+
+### 1. Crear una interfaz de persistencia desde el inicio
+
+Se consideró agregar una interfaz RepositorioSolicitudes entre el servicio
+y RepositorioSolicitudesJpa.
+
+Se descartó porque actualmente no existe un cambio de motor de base de
+datos confirmado. Agregar esta abstracción aumentaría el número de clases
+sin aportar un beneficio inmediato.
+
+Se reconsideraría si la empresa decide cambiar de motor de base de datos
+o necesita utilizar diferentes mecanismos de persistencia.
+
+### 2. Utilizar un bus genérico de eventos
+
+Se consideró utilizar ApplicationEventPublisher para las notificaciones.
+
+Se descartó porque los tres observadores actuales ya se pueden gestionar
+mediante la interfaz ObservadorCambioEstado. Un mecanismo adicional
+aumentaría la complejidad sin resolver un problema actual.
+
+Se reconsideraría si el sistema incorpora muchos eventos independientes
+y diferentes módulos necesitan reaccionar a ellos.
+
+### 3. Crear una fábrica para construir las solicitudes
+
+Se consideró implementar una Abstract Factory para crear objetos
+SolicitudReembolso.
+
+Se descartó porque actualmente existe un solo tipo de solicitud y
+su construcción no presenta variaciones que justifiquen una fábrica.
+
+Se reconsideraría si aparecen diferentes tipos de solicitudes con
+procesos de creación realmente distintos.
 
 ## 5. Estructura del proyecto
 
